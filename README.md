@@ -180,17 +180,5 @@ NEXT_PUBLIC_API_URL=your-api-url
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 📞 Support
-
-For support and questions:
-- **Email**: support@memosheria.com
-- **Documentation**: [Project Wiki]
-- **Issues**: [GitHub Issues]
-
----
-
-Built with ❤️ for couples planning their perfect wedding day.
