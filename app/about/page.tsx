@@ -61,27 +61,27 @@ export default function AboutPage() {
     {
       name: "Bisrat Gizaw",
       role: "Project Manager",
-      image: "/team-bisrat-new.jpg",
+      image: "/team-bisrat-updated.png",
     },
     {
       name: "Dagmawi Paris",
       role: "Lead System Analyst",
-      image: "/team-dagmawi-new.jpg",
+      image: "/team-paris-updated.png",
     },
     {
       name: "Adera Yoseph",
       role: "Requirements & Documentation Specialist",
-      image: "/team-adera-new.jpg",
+      image: "/team-adera-updated.png",
     },
     {
       name: "Nathan Samuel",
       role: "System Designer",
-      image: "/team-nathan-new.jpg",
+      image: "/team-nathan-updated.png",
     },
     {
       name: "Simeon Fikre",
       role: "UI/UX Designer",
-      image: "/team-simeon-new.jpg",
+      image: "/team-simon-updated.png",
     },
   ]
 
@@ -114,7 +114,7 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gold-50/30 to-bronze-50/30 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-gold-50/30 to-bronze-50/30 pt-24">
       {/* Hero Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="absolute top-10 left-10 animate-sparkle">
@@ -261,7 +261,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section - Clean Minimal Design */}
+      {/* Team Section - Clean Minimal Design with Updated Photos */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
