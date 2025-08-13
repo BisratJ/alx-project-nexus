@@ -23,8 +23,10 @@ import {
   Clock,
   CheckCircle,
   SlidersHorizontal,
+  ChevronLeft,
 } from "lucide-react"
 import Image from "next/image"
+import { useAuth } from "@/contexts/auth-context"
 
 const mockPackages = [
   {
@@ -217,7 +219,9 @@ export default function PackagesPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [currentPage, setCurrentPage] = useState(1)
+  const [paginationHistory, setPaginationHistory] = useState<number[]>([1]) // Track pagination history
   const packagesPerPage = 6
+  const { user } = useAuth()
 
   const filteredPackages = mockPackages.filter((pkg) => {
     const matchesCategory = selectedCategory === "all" || pkg.category === selectedCategory
@@ -266,11 +270,29 @@ export default function PackagesPage() {
   }
 
   const handleBookNow = (packageId: string) => {
+    if (!user) {
+      // If user is not logged in, redirect to login page with return URL
+      window.location.href = `/login?redirect=/packages/${packageId}?action=book`
+      return
+    }
+    // If user is logged in, redirect directly to booking page
     window.location.href = `/packages/${packageId}?action=book`
   }
 
   const handleLoadMore = () => {
+    // Save current page to history before moving to next page
+    setPaginationHistory((prev) => [...prev, currentPage])
     setCurrentPage((prev) => prev + 1)
+  }
+
+  const handleGoBack = () => {
+    // Go back to previous page in history
+    if (paginationHistory.length > 1) {
+      const newHistory = [...paginationHistory]
+      const previousPage = newHistory.pop() || 1
+      setPaginationHistory(newHistory)
+      setCurrentPage(newHistory[newHistory.length - 1] || 1)
+    }
   }
 
   return (
@@ -429,6 +451,21 @@ export default function PackagesPage() {
               </div>
             </div>
 
+            {/* Pagination Navigation */}
+            {currentPage > 1 && paginationHistory.length > 1 && (
+              <div className="mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGoBack}
+                  className="flex items-center space-x-1 border-gold-200 hover:bg-gold-50 bg-transparent"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Back to Previous Page</span>
+                </Button>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {currentPackages.map((pkg, index) => (
                 <Card
@@ -515,18 +552,16 @@ export default function PackagesPage() {
                     </div>
 
                     <div className="flex space-x-2">
-                      <Button className="flex-1 btn-luxury" onClick={() => handleViewDetails(pkg.id)}>
-                        View Details
+                      <Button className="flex-1 btn-luxury" onClick={() => handleBookNow(pkg.id)}>
+                        Book Now
                       </Button>
                       <Button
                         variant="outline"
-                        size="icon"
-                        className={`border-gold-300 hover:bg-gold-50 bg-transparent ${
-                          favorites.has(pkg.id) ? "text-red-500 border-red-300" : ""
-                        }`}
-                        onClick={() => handleToggleFavorite(pkg.id)}
+                        size="sm"
+                        className="border-gold-300 hover:bg-gold-50 bg-transparent"
+                        onClick={() => handleViewDetails(pkg.id)}
                       >
-                        <Heart className={`h-4 w-4 ${favorites.has(pkg.id) ? "fill-current" : ""}`} />
+                        View Details
                       </Button>
                     </div>
                   </CardContent>

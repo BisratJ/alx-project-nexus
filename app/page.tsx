@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
   Heart,
@@ -21,13 +21,19 @@ import {
   Palette,
   ChevronLeft,
   ChevronRight,
+  Play,
+  Users,
+  Calendar,
+  Shield,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function HomePage() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [favorites, setFavorites] = useState<number[]>([])
+  const { user } = useAuth()
 
   const featuredPackages = [
     {
@@ -41,6 +47,8 @@ export default function HomePage() {
       category: "Photography",
       icon: Camera,
       features: ["8-hour coverage", "2 photographers", "500+ edited photos", "Online gallery"],
+      badge: "Most Popular",
+      discount: "20% OFF",
     },
     {
       id: 2,
@@ -53,6 +61,8 @@ export default function HomePage() {
       category: "Venue",
       icon: MapPin,
       features: ["200 guest capacity", "Garden ceremony", "Reception hall", "Catering kitchen"],
+      badge: "Premium",
+      discount: "15% OFF",
     },
     {
       id: 3,
@@ -65,6 +75,8 @@ export default function HomePage() {
       category: "Catering",
       icon: Utensils,
       features: ["3-course meal", "Vegetarian options", "Professional service", "Custom menu"],
+      badge: "Chef's Choice",
+      discount: "10% OFF",
     },
   ]
 
@@ -99,10 +111,10 @@ export default function HomePage() {
   ]
 
   const stats = [
-    { number: "10,000+", label: "Happy Couples", icon: Heart },
-    { number: "500+", label: "Verified Vendors", icon: Award },
-    { number: "50+", label: "Cities Covered", icon: MapPin },
-    { number: "99.9%", label: "Success Rate", icon: CheckCircle },
+    { number: "10,000+", label: "Happy Couples", icon: Heart, color: "text-pink-500" },
+    { number: "500+", label: "Verified Vendors", icon: Award, color: "text-gold-500" },
+    { number: "50+", label: "Cities Covered", icon: MapPin, color: "text-blue-500" },
+    { number: "99.9%", label: "Success Rate", icon: CheckCircle, color: "text-green-500" },
   ]
 
   const services = [
@@ -111,36 +123,69 @@ export default function HomePage() {
       title: "Photography & Videography",
       description: "Capture every precious moment with professional photographers and videographers",
       color: "from-blue-400 to-blue-600",
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600",
     },
     {
       icon: MapPin,
       title: "Venues & Locations",
       description: "Find the perfect venue for your ceremony and reception",
       color: "from-green-400 to-green-600",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
     },
     {
       icon: Utensils,
       title: "Catering Services",
       description: "Delicious cuisine and professional catering for your special day",
       color: "from-orange-400 to-orange-600",
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600",
     },
     {
       icon: Music,
       title: "Entertainment",
       description: "DJs, live bands, and entertainment to keep your guests dancing",
       color: "from-purple-400 to-purple-600",
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600",
     },
     {
       icon: Palette,
       title: "Decoration & Flowers",
       description: "Beautiful floral arrangements and decorations to set the mood",
       color: "from-pink-400 to-pink-600",
+      bgColor: "bg-pink-50",
+      iconColor: "text-pink-600",
     },
     {
       icon: Car,
       title: "Transportation",
       description: "Luxury transportation for the bride, groom, and wedding party",
       color: "from-gray-400 to-gray-600",
+      bgColor: "bg-gray-50",
+      iconColor: "text-gray-600",
+    },
+  ]
+
+  const features = [
+    {
+      icon: Calendar,
+      title: "Smart Planning",
+      description: "AI-powered timeline management and automated reminders",
+      color: "from-gold-400 to-gold-600",
+    },
+    {
+      icon: Users,
+      title: "Verified Vendors",
+      description: "Connect with 500+ verified wedding professionals",
+      color: "from-bronze-400 to-bronze-600",
+    },
+    {
+      icon: Shield,
+      title: "Secure Booking",
+      description: "Bank-level security with instant booking confirmation",
+      color: "from-gold-500 to-bronze-500",
     },
   ]
 
@@ -163,70 +208,135 @@ export default function HomePage() {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)
   }
 
+  const handleBookNow = (packageId: number) => {
+    if (!user) {
+      window.location.href = `/login?redirect=/packages/${packageId}?action=book`
+      return
+    }
+    window.location.href = `/packages/${packageId}?action=book`
+  }
+
   return (
     <div className="min-h-screen">
-      {/* Hero Section - No Search Bar */}
-      <section className="relative bg-gradient-to-br from-gold-50 to-bronze-50 pt-32 pb-20 overflow-hidden">
-        <div className="absolute top-20 right-20 animate-sparkle">
-          <Sparkles className="h-8 w-8 text-gold-400" />
-        </div>
-        <div className="absolute bottom-32 left-20 animate-sparkle" style={{ animationDelay: "1s" }}>
-          <Sparkles className="h-6 w-6 text-bronze-400" />
-        </div>
-        <div className="absolute top-1/2 left-10 animate-sparkle" style={{ animationDelay: "2s" }}>
-          <Sparkles className="h-5 w-5 text-gold-500" />
+      {/* Modern Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gold-50 via-white to-bronze-50 pt-24">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-gold-400/20 to-bronze-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div
+            className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-blue-400/10 to-cyan-400/10 rounded-full blur-2xl animate-pulse"
+            style={{ animationDelay: "4s" }}
+          ></div>
         </div>
 
-        <div className="container mx-auto px-4 text-center">
-          <div className="animate-fade-in">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-              Your Dream Wedding
-              <br />
-              <span className="gradient-text">Starts Here</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Connect with Ethiopia's finest wedding vendors and create unforgettable memories. From venues to
-              photography, we've got everything you need for your perfect day.
-            </p>
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-20 animate-float">
+          <div className="w-4 h-4 bg-gold-400 rounded-full opacity-60"></div>
+        </div>
+        <div className="absolute top-32 right-32 animate-float" style={{ animationDelay: "1s" }}>
+          <Sparkles className="h-6 w-6 text-gold-400 opacity-70" />
+        </div>
+        <div className="absolute bottom-32 left-32 animate-float" style={{ animationDelay: "2s" }}>
+          <div className="w-3 h-3 bg-bronze-400 rounded-full opacity-50"></div>
+        </div>
+        <div className="absolute bottom-20 right-20 animate-float" style={{ animationDelay: "3s" }}>
+          <Heart className="h-5 w-5 text-pink-400 opacity-60" />
+        </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link href="/packages">
-                <Button size="lg" className="btn-luxury text-lg px-8 py-4 rounded-full shadow-xl hover:shadow-2xl">
-                  Explore Packages
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/vendors">
+        <div className="relative z-10 container mx-auto px-4 text-center">
+          <div className="max-w-5xl mx-auto">
+            {/* Main Heading */}
+            <div className="mb-8 animate-fade-in">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                <span className="text-gray-900">Your Perfect</span>
+                <br />
+                <span className="bg-gradient-to-r from-gold-400 via-gold-300 to-bronze-400 bg-clip-text text-transparent animate-gradient">
+                  Wedding Journey
+                </span>
+                <br />
+                <span className="text-gray-900">Starts Here</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Transform your dream wedding into reality with Ethiopia's most trusted wedding platform. Connect with
+                premium vendors, plan seamlessly, and create memories that last forever.
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div
+              className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in"
+              style={{ animationDelay: "0.3s" }}
+            >
+              <Link href="/register">
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="text-lg px-8 py-4 rounded-full border-2 border-gold-300 hover:bg-gold-50 hover:border-gold-400 bg-transparent shadow-lg"
+                  className="group relative overflow-hidden bg-gradient-to-r from-gold-500 to-bronze-500 hover:from-gold-600 hover:to-bronze-600 text-white text-lg px-10 py-6 rounded-full shadow-2xl hover:shadow-gold-500/25 transition-all duration-300 transform hover:scale-105"
                 >
-                  Browse Vendors
+                  <span className="relative z-10 flex items-center">
+                    Start Planning Free
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </Button>
               </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                className="group text-lg px-10 py-6 rounded-full border-2 border-gold-400 text-gold-600 hover:bg-gold-400 hover:text-white bg-white/80 backdrop-blur-sm shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                Watch Demo
+              </Button>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto animate-fade-in"
+              style={{ animationDelay: "0.6s" }}
+            >
               {stats.map((stat, index) => (
-                <div key={index} className="text-center animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <stat.icon className="h-8 w-8 text-gold-600 mx-auto mb-2" />
-                  <div className="text-2xl md:text-3xl font-bold text-gray-900">{stat.number}</div>
+                <div key={index} className="text-center group">
+                  <div className="mb-4 flex justify-center">
+                    <div className="w-16 h-16 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg border border-gold-200/50">
+                      <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                    </div>
+                  </div>
+                  <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{stat.number}</div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-gold-400/50 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-gold-400 rounded-full mt-2 animate-pulse"></div>
+          </div>
+        </div>
       </section>
 
       {/* Featured Packages */}
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-slate-900/5 to-transparent"></div>
+
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Featured <span className="gradient-text">Packages</span>
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-4 py-2 bg-gold-100 text-gold-700 rounded-full text-sm font-medium mb-6">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Most Popular Packages
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Wedding Packages
+              <br />
+              <span className="bg-gradient-to-r from-gold-600 to-bronze-600 bg-clip-text text-transparent">
+                Loved by Couples
+              </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Discover our most popular wedding packages, carefully curated to make your special day perfect
@@ -237,70 +347,79 @@ export default function HomePage() {
             {featuredPackages.map((pkg, index) => (
               <Card
                 key={pkg.id}
-                className="card-luxury border-0 overflow-hidden group hover:scale-105 transition-all duration-300"
+                className="group relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white"
               >
                 <div className="relative">
                   <Image
                     src={pkg.image || "/placeholder.svg"}
                     alt={pkg.title}
                     width={400}
-                    height={250}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                    height={280}
+                    className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-gold-500 text-white">{pkg.category}</Badge>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* Badges */}
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    <Badge className="bg-gradient-to-r from-gold-500 to-bronze-500 text-white px-3 py-1 shadow-lg">
+                      {pkg.badge}
+                    </Badge>
+                    <Badge className="bg-red-500 text-white px-3 py-1 shadow-lg animate-pulse">{pkg.discount}</Badge>
                   </div>
-                  <div className="absolute top-4 right-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => toggleFavorite(pkg.id)}
-                      className="bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 rounded-full shadow-lg"
-                    >
-                      <Heart
-                        className={`h-5 w-5 ${
-                          favorites.includes(pkg.id) ? "fill-red-500 text-red-500" : ""
-                        } transition-colors`}
-                      />
-                    </Button>
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* Favorite Button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => toggleFavorite(pkg.id)}
+                    className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 rounded-full shadow-lg backdrop-blur-sm"
+                  >
+                    <Heart
+                      className={`h-5 w-5 ${
+                        favorites.includes(pkg.id) ? "fill-red-500 text-red-500" : ""
+                      } transition-colors`}
+                    />
+                  </Button>
                 </div>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-3">
+
+                <CardContent className="p-8">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
                       <pkg.icon className="h-5 w-5 text-gold-600" />
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 fill-gold-400 text-gold-400" />
-                        <span className="text-sm font-medium">{pkg.rating}</span>
-                        <span className="text-sm text-gray-500">({pkg.reviews})</span>
-                      </div>
+                      <Badge variant="secondary" className="bg-gold-100 text-gold-700">
+                        {pkg.category}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium">{pkg.rating}</span>
+                      <span className="text-sm text-gray-500">({pkg.reviews})</span>
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{pkg.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{pkg.description}</p>
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap gap-1">
-                      {pkg.features.slice(0, 2).map((feature, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs bg-gold-100 text-gold-700">
+
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-gold-600 transition-colors">
+                    {pkg.title}
+                  </h3>
+                  <p className="text-gray-600 mb-6 line-clamp-2">{pkg.description}</p>
+
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      {pkg.features.slice(0, 3).map((feature, idx) => (
+                        <div key={idx} className="flex items-center text-sm text-gray-600">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                           {feature}
-                        </Badge>
+                        </div>
                       ))}
-                      {pkg.features.length > 2 && (
-                        <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                          +{pkg.features.length - 2} more
-                        </Badge>
-                      )}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="text-lg font-bold text-gold-600">{pkg.price}</div>
-                      <div className="flex space-x-2">
-                        <Link href={`/packages/${pkg.id}`}>
-                          <Button size="sm" className="btn-luxury">
-                            Book Now
-                          </Button>
-                        </Link>
-                      </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div className="text-2xl font-bold text-gold-600">{pkg.price}</div>
+                      <Button
+                        className="bg-gradient-to-r from-gold-500 to-bronze-500 hover:from-gold-600 hover:to-bronze-600 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        onClick={() => handleBookNow(pkg.id)}
+                      >
+                        Book Now
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -308,9 +427,13 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-16">
             <Link href="/packages">
-              <Button size="lg" variant="outline" className="border-gold-300 hover:bg-gold-50 bg-transparent">
+              <Button
+                size="lg"
+                variant="outline"
+                className="px-8 py-4 rounded-full border-2 border-gold-300 hover:bg-gold-50 hover:border-gold-400 bg-transparent text-gold-600 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
                 View All Packages
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -320,14 +443,22 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className="py-20 bg-gradient-to-br from-gold-50 to-bronze-50">
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our <span className="gradient-text">Services</span>
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
+              <Award className="h-4 w-4 mr-2" />
+              Complete Wedding Solutions
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Everything You Need
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                For Your Special Day
+              </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Everything you need for your perfect wedding day, all in one place
+              From planning to execution, we provide all the tools and services to make your wedding perfect
             </p>
           </div>
 
@@ -335,69 +466,135 @@ export default function HomePage() {
             {services.map((service, index) => (
               <Card
                 key={index}
-                className="card-luxury text-center group hover:scale-105 transition-all duration-300 border-0"
+                className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
               >
-                <CardHeader className="pb-4">
+                <CardContent className="p-8 text-center">
                   <div
-                    className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${service.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-20 h-20 mx-auto rounded-2xl ${service.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <service.icon className="h-8 w-8 text-white" />
+                    <service.icon className={`h-10 w-10 ${service.iconColor}`} />
                   </div>
-                  <CardTitle className="text-xl font-bold">{service.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base text-gray-600 leading-relaxed">
-                    {service.description}
-                  </CardDescription>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">{service.description}</p>
                 </CardContent>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-white">
+      {/* Features Section */}
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              What Couples <span className="gradient-text">Say</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-6">
+                <Shield className="h-4 w-4 mr-2" />
+                Why Choose Memosheria
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Planning Made
+                <br />
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Simple & Secure
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Our platform combines cutting-edge technology with personalized service to make your wedding planning
+                journey smooth and enjoyable.
+              </p>
+
+              <div className="space-y-6">
+                {features.map((feature, index) => (
+                  <div key={index} className="flex items-start space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center flex-shrink-0`}
+                    >
+                      <feature.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
+                      <p className="text-gray-600">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-3xl blur-3xl"></div>
+              <div className="relative bg-white rounded-3xl shadow-2xl p-8">
+                <Image
+                  src="/elegant-outdoor-wedding.png"
+                  alt="Wedding Planning Dashboard"
+                  width={600}
+                  height={400}
+                  className="w-full h-auto rounded-2xl"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 bg-gradient-to-br from-gold-50 to-bronze-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-4 py-2 bg-pink-100 text-pink-700 rounded-full text-sm font-medium mb-6">
+              <Heart className="h-4 w-4 mr-2" />
+              Happy Couples
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Love Stories &
+              <br />
+              <span className="bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
+                Success Stories
+              </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Real stories from real couples who found their perfect wedding through Memosheria
             </p>
           </div>
 
-          <div className="relative max-w-4xl mx-auto">
-            <div className="overflow-hidden rounded-2xl">
+          <div className="relative max-w-5xl mx-auto">
+            <div className="overflow-hidden rounded-3xl">
               <div
                 className="flex transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
               >
                 {testimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="w-full flex-shrink-0">
-                    <Card className="card-luxury border-0 mx-4">
-                      <CardContent className="p-8 text-center">
-                        <div className="flex justify-center mb-4">
+                  <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
+                    <Card className="border-0 shadow-2xl bg-white">
+                      <CardContent className="p-12 text-center">
+                        <div className="flex justify-center mb-6">
                           {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} className="h-5 w-5 fill-gold-400 text-gold-400" />
+                            <Star key={i} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
                           ))}
                         </div>
-                        <blockquote className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed italic">
+                        <blockquote className="text-2xl md:text-3xl text-gray-700 mb-8 leading-relaxed italic font-medium">
                           "{testimonial.text}"
                         </blockquote>
-                        <div className="flex items-center justify-center space-x-4">
-                          <Image
-                            src={testimonial.image || "/placeholder.svg"}
-                            alt={testimonial.name}
-                            width={60}
-                            height={60}
-                            className="rounded-full object-cover"
-                          />
+                        <div className="flex items-center justify-center space-x-6">
+                          <div className="relative">
+                            <Image
+                              src={testimonial.image || "/placeholder.svg"}
+                              alt={testimonial.name}
+                              width={80}
+                              height={80}
+                              className="rounded-full object-cover ring-4 ring-gold-200"
+                            />
+                            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-gold-400 to-bronze-400 rounded-full flex items-center justify-center">
+                              <Heart className="h-4 w-4 text-white" />
+                            </div>
+                          </div>
                           <div className="text-left">
-                            <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                            <div className="text-sm text-gray-600">{testimonial.location}</div>
-                            <div className="text-xs text-gold-600">{testimonial.weddingDate}</div>
+                            <div className="text-xl font-bold text-gray-900">{testimonial.name}</div>
+                            <div className="text-gray-600">{testimonial.location}</div>
+                            <div className="text-sm text-gold-600 font-medium">{testimonial.weddingDate}</div>
                           </div>
                         </div>
                       </CardContent>
@@ -411,7 +608,7 @@ export default function HomePage() {
               variant="ghost"
               size="icon"
               onClick={prevTestimonial}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-lg hover:bg-gray-50 rounded-full"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-6 bg-white shadow-xl hover:bg-gray-50 rounded-full w-12 h-12"
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
@@ -419,18 +616,20 @@ export default function HomePage() {
               variant="ghost"
               size="icon"
               onClick={nextTestimonial}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-lg hover:bg-gray-50 rounded-full"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-6 bg-white shadow-xl hover:bg-gray-50 rounded-full w-12 h-12"
             >
               <ChevronRight className="h-6 w-6" />
             </Button>
 
-            <div className="flex justify-center mt-8 space-x-2">
+            <div className="flex justify-center mt-12 space-x-3">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentTestimonial ? "bg-gold-500" : "bg-gray-300"
+                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                    index === currentTestimonial
+                      ? "bg-gradient-to-r from-gold-500 to-bronze-500 w-12"
+                      : "bg-gray-300 hover:bg-gray-400"
                   }`}
                 />
               ))}
@@ -440,80 +639,198 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-gold-500 to-bronze-500 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute top-10 left-10 animate-sparkle">
-          <Sparkles className="h-8 w-8 text-white/50" />
+      <section className="py-24 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-gold-400/10 to-bronze-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div
+            className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
         </div>
-        <div className="absolute bottom-10 right-10 animate-sparkle" style={{ animationDelay: "1s" }}>
-          <Sparkles className="h-6 w-6 text-white/50" />
-        </div>
+
         <div className="relative container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Plan Your Dream Wedding?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of couples who have found their perfect wedding vendors through our platform
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="text-lg px-8 py-4 rounded-full bg-white text-gold-600 hover:bg-gray-100 shadow-xl"
-              >
-                Get Started Today
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 py-4 rounded-full border-2 border-white text-white hover:bg-white hover:text-gold-600 bg-transparent shadow-lg"
-              >
-                Talk to Expert
-              </Button>
-            </Link>
+          <div className="max-w-4xl mx-auto">
+            <div className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-medium mb-8">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Join 10,000+ Happy Couples
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold mb-8">
+              Ready to Plan Your
+              <br />
+              <span className="bg-gradient-to-r from-gold-400 to-bronze-400 bg-clip-text text-transparent">
+                Dream Wedding?
+              </span>
+            </h2>
+            <p className="text-xl md:text-2xl mb-12 opacity-90 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of couples who have planned their perfect day with Memosheria. Start your journey today!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/register">
+                <Button
+                  size="lg"
+                  className="group relative overflow-hidden bg-gradient-to-r from-gold-500 to-bronze-500 hover:from-gold-600 hover:to-bronze-600 text-white text-lg px-10 py-6 rounded-full shadow-2xl hover:shadow-gold-500/25 transition-all duration-300 transform hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Get Started Today
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg px-10 py-6 rounded-full border-2 border-white/30 text-white hover:bg-white hover:text-gray-900 bg-white/10 backdrop-blur-sm shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Talk to Expert
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-16 bg-gray-900 text-white">
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-gold-600 rounded-full flex items-center justify-center mx-auto">
-                <Phone className="h-6 w-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-gold-500 to-bronze-500 rounded-lg flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-2xl font-bold">Memosheria</span>
               </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">Call Us</h3>
-                <p className="text-gray-400">+251 911 123456</p>
-                <p className="text-gray-400">Mon-Fri 9AM-6PM EAT</p>
+              <p className="text-gray-400 leading-relaxed">
+                Making wedding dreams come true, one celebration at a time. Your perfect day starts here.
+              </p>
+              <div className="flex space-x-4">
+                <div className="w-12 h-12 bg-gold-600 rounded-full flex items-center justify-center hover:bg-gold-700 transition-colors cursor-pointer">
+                  <Phone className="h-5 w-5" />
+                </div>
+                <div className="w-12 h-12 bg-gold-600 rounded-full flex items-center justify-center hover:bg-gold-700 transition-colors cursor-pointer">
+                  <Mail className="h-5 w-5" />
+                </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-gold-600 rounded-full flex items-center justify-center mx-auto">
-                <Mail className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">Email Us</h3>
-                <p className="text-gray-400">hello@memosheria.com</p>
-                <p className="text-gray-400">We respond within 24 hours</p>
-              </div>
+            <div>
+              <h3 className="font-bold text-lg mb-6 text-gold-400">For Couples</h3>
+              <ul className="space-y-4 text-gray-400">
+                <li>
+                  <Link
+                    href="/packages"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Browse Packages
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/vendors"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Find Vendors
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/inspiration"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Get Inspired
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Planning Tools
+                  </Link>
+                </li>
+              </ul>
             </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-gold-600 rounded-full flex items-center justify-center mx-auto">
-                <MapPin className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">Visit Us</h3>
-                <p className="text-gray-400">Bole Road, Addis Ababa</p>
-                <p className="text-gray-400">Ethiopia</p>
-              </div>
+            <div>
+              <h3 className="font-bold text-lg mb-6 text-gold-400">For Vendors</h3>
+              <ul className="space-y-4 text-gray-400">
+                <li>
+                  <Link
+                    href="/vendor/register"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Join as Vendor
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/vendor"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Vendor Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/vendor/pricing"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Pricing Plans
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/vendor/resources"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Resources
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-6 text-gold-400">Support</h3>
+              <ul className="space-y-4 text-gray-400">
+                <li>
+                  <Link
+                    href="/help"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms"
+                    className="hover:text-white transition-colors hover:translate-x-1 transform duration-200 inline-block"
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 Memosheria. All rights reserved. Made with ❤️ for couples in Ethiopia.</p>
+          </div>
         </div>
-      </section>
+      </footer>
     </div>
   )
 }

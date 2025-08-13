@@ -51,19 +51,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }, [])
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     setLoading(true)
 
-    // Mock authentication
-    const foundUser = mockUsers.find((u) => u.email === email)
-    if (foundUser && password === "password") {
-      setUser(foundUser)
-      localStorage.setItem("memosheria_user", JSON.stringify(foundUser))
-    } else {
-      throw new Error("Invalid credentials")
-    }
+    try {
+      // Mock authentication - simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
-    setLoading(false)
+      // Find user by email
+      const foundUser = mockUsers.find((u) => u.email === email)
+
+      if (foundUser && password === "password") {
+        setUser(foundUser)
+        localStorage.setItem("memosheria_user", JSON.stringify(foundUser))
+        setLoading(false)
+        return foundUser
+      } else {
+        setLoading(false)
+        throw new Error("Invalid credentials")
+      }
+    } catch (error) {
+      setLoading(false)
+      throw error
+    }
   }
 
   const logout = () => {

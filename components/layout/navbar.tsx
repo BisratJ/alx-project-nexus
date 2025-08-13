@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Logo } from "@/components/ui/logo"
-import { Menu, User, Bell, X } from "lucide-react"
+import { Menu, User, Bell, X, Heart } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 
@@ -88,6 +88,7 @@ export function Navbar() {
           <div className="hidden lg:flex items-center space-x-4">
             {user ? (
               <>
+                {/* Notifications Button */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -98,6 +99,19 @@ export function Navbar() {
                     3
                   </span>
                 </Button>
+
+                {/* Favorites Button - Now Functional */}
+                <Link href="/favorites">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative h-12 w-12 rounded-full bg-gradient-to-r from-gold-50 to-bronze-50 hover:from-gold-100 hover:to-bronze-100 border border-gold-200/30 shadow-lg transition-all duration-300 hover:scale-105"
+                  >
+                    <Heart className="h-5 w-5 text-gold-600" />
+                  </Button>
+                </Link>
+
+                {/* User Profile Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -174,13 +188,24 @@ export function Navbar() {
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-3">
             {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 rounded-full bg-gradient-to-r from-gold-50 to-bronze-50 border border-gold-200/30"
-              >
-                <Bell className="h-5 w-5 text-gold-600" />
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-full bg-gradient-to-r from-gold-50 to-bronze-50 border border-gold-200/30"
+                >
+                  <Bell className="h-5 w-5 text-gold-600" />
+                </Button>
+                <Link href="/favorites">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-full bg-gradient-to-r from-gold-50 to-bronze-50 border border-gold-200/30"
+                  >
+                    <Heart className="h-5 w-5 text-gold-600" />
+                  </Button>
+                </Link>
+              </>
             )}
             <Button
               variant="ghost"
@@ -224,6 +249,13 @@ export function Navbar() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Profile
+                    </Link>
+                    <Link
+                      href="/favorites"
+                      className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-gold-600 hover:bg-gradient-to-r hover:from-gold-50 hover:to-bronze-50 rounded-xl transition-all duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Favorites
                     </Link>
                     <button
                       onClick={() => {

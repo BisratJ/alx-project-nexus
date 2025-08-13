@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Logo } from "@/components/ui/logo"
 import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -20,9 +21,20 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [redirectUrl, setRedirectUrl] = useState("")
 
   const { login } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    // Get redirect URL from query parameters if available
+    const redirect = searchParams.get("redirect")
+    if (redirect) {
+      setRedirectUrl(redirect)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,8 +42,33 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await login(email, password)
-      router.push("/dashboard")
+      const user = await login(email, password)
+
+      // Show success toast
+      toast({
+        title: "Welcome back!",
+        description: `Successfully logged in as ${user.name || user.email}`,
+      })
+
+      // Small delay to show the toast before redirecting
+      setTimeout(() => {
+        // Redirect based on user role or redirect URL
+        if (redirectUrl) {
+          router.push(redirectUrl)
+        } else {
+          // Redirect based on user role
+          switch (user.role) {
+            case "admin":
+              router.push("/admin")
+              break
+            case "vendor":
+              router.push("/vendor")
+              break
+            default:
+              router.push("/dashboard")
+          }
+        }
+      }, 1000)
     } catch (err) {
       setError("Invalid email or password. Please try again.")
     } finally {
@@ -48,31 +85,42 @@ export default function LoginPage() {
   const fillDemoAccount = (email: string, password: string) => {
     setEmail(email)
     setPassword(password)
+    setError("") // Clear any existing errors when filling demo account
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-hero-pattern px-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gold-100 via-gold-50 to-bronze-100 px-4 py-32 relative overflow-hidden">
       {/* Background decorations */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-gold-300/20 to-bronze-300/20 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-bronze-300/20 to-gold-300/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+      </div>
+
       <div className="absolute top-20 left-20 animate-sparkle">
-        <Sparkles className="h-6 w-6 text-gold-400" />
+        <Sparkles className="h-6 w-6 text-gold-500" />
       </div>
       <div className="absolute bottom-20 right-20 animate-sparkle" style={{ animationDelay: "1s" }}>
-        <Sparkles className="h-4 w-4 text-bronze-400" />
+        <Sparkles className="h-4 w-4 text-bronze-500" />
       </div>
       <div className="absolute top-1/2 left-10 animate-sparkle" style={{ animationDelay: "2s" }}>
-        <Sparkles className="h-5 w-5 text-gold-500" />
+        <Sparkles className="h-5 w-5 text-gold-600" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8 animate-fade-in">
           <Logo variant="primary" size="xl" href="/" />
-          <h1 className="text-3xl font-bold text-gray-900 mt-4 mb-2">Welcome Back</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mt-4 mb-2">Welcome Back</h1>
           <p className="text-gray-600">Sign in to continue planning your perfect wedding</p>
         </div>
 
-        <Card className="card-luxury border-0 shadow-2xl">
+        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-bold gradient-text">Sign In</CardTitle>
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gold-600 to-bronze-600 bg-clip-text text-transparent">
+              Sign In
+            </CardTitle>
             <CardDescription className="text-gray-600">Enter your credentials to access your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -145,7 +193,11 @@ export default function LoginPage() {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full btn-luxury h-12 text-lg" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-gold-500 to-bronze-500 hover:from-gold-600 hover:to-bronze-600 text-white h-12 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                disabled={loading}
+              >
                 {loading ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -167,7 +219,7 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-12 bg-transparent">
+              <Button variant="outline" className="h-12 bg-transparent hover:bg-gray-50">
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
                     fill="currentColor"
@@ -188,7 +240,7 @@ export default function LoginPage() {
                 </svg>
                 Google
               </Button>
-              <Button variant="outline" className="h-12 bg-transparent">
+              <Button variant="outline" className="h-12 bg-transparent hover:bg-gray-50">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                 </svg>
@@ -208,7 +260,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Demo Accounts */}
-        <Card className="mt-6 card-luxury border-gold-200">
+        <Card className="mt-6 border-0 shadow-xl bg-white/90 backdrop-blur-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-semibold text-center text-gold-700">Demo Accounts</CardTitle>
             <CardDescription className="text-center text-sm">
