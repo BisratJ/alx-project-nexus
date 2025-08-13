@@ -59,60 +59,57 @@ export default function AboutPage() {
 
   const team = [
     {
-      name: "Sarah Mitchell",
-      role: "CEO & Co-Founder",
-      bio: "Former wedding planner with 10+ years of experience helping couples create their dream weddings.",
-      image: "/team-sarah.jpg",
-      expertise: ["Wedding Planning", "Business Strategy", "Customer Experience"],
+      name: "Bisrat Gizaw",
+      role: "Project Manager",
+      image: "/team-bisrat-new.jpg",
     },
     {
-      name: "Michael Chen",
-      role: "CTO & Co-Founder",
-      bio: "Tech entrepreneur passionate about using technology to solve real-world problems in the wedding industry.",
-      image: "/team-michael.jpg",
-      expertise: ["Technology", "Product Development", "Platform Architecture"],
+      name: "Dagmawi Paris",
+      role: "Lead System Analyst",
+      image: "/team-dagmawi-new.jpg",
     },
     {
-      name: "Emily Rodriguez",
-      role: "Head of Vendor Relations",
-      bio: "Wedding industry veteran who ensures our vendor network maintains the highest quality standards.",
-      image: "/team-emily.jpg",
-      expertise: ["Vendor Management", "Quality Assurance", "Partnership Development"],
+      name: "Adera Yoseph",
+      role: "Requirements & Documentation Specialist",
+      image: "/team-adera-new.jpg",
     },
     {
-      name: "David Thompson",
-      role: "Head of Customer Success",
-      bio: "Customer experience specialist dedicated to making every couple's journey smooth and memorable.",
-      image: "/team-david.jpg",
-      expertise: ["Customer Support", "User Experience", "Process Optimization"],
+      name: "Nathan Samuel",
+      role: "System Designer",
+      image: "/team-nathan-new.jpg",
+    },
+    {
+      name: "Simeon Fikre",
+      role: "UI/UX Designer",
+      image: "/team-simeon-new.jpg",
     },
   ]
 
   const milestones = [
     {
-      year: "2020",
+      year: "2023",
       title: "Company Founded",
-      description: "Started with a vision to revolutionize wedding planning through technology.",
-    },
-    {
-      year: "2021",
-      title: "First 100 Vendors",
-      description: "Reached our first milestone of 100 verified wedding vendors on the platform.",
-    },
-    {
-      year: "2022",
-      title: "1,000 Weddings",
-      description: "Celebrated helping plan our 1,000th wedding, marking a major achievement.",
+      description: "Started with a vision to revolutionize wedding planning through technology in Ethiopia.",
     },
     {
       year: "2023",
-      title: "National Expansion",
-      description: "Expanded to 50+ cities across the country, serving couples nationwide.",
+      title: "First 50 Vendors",
+      description: "Reached our first milestone of 50 verified wedding vendors in Addis Ababa.",
     },
     {
       year: "2024",
-      title: "10,000 Happy Couples",
-      description: "Reached the incredible milestone of 10,000 couples who found their perfect wedding through us.",
+      title: "500 Weddings",
+      description: "Celebrated helping plan our 500th wedding, marking a major achievement.",
+    },
+    {
+      year: "2024",
+      title: "Platform Launch",
+      description: "Successfully launched our comprehensive wedding planning platform.",
+    },
+    {
+      year: "2024",
+      title: "5,000 Happy Couples",
+      description: "Reached the incredible milestone of 5,000 couples who found their perfect wedding through us.",
     },
   ]
 
@@ -187,23 +184,23 @@ export default function AboutPage() {
               <div className="space-y-6">
                 <h3 className="text-3xl font-bold text-gray-900">From Personal Experience to Platform</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Memosheria was born from our founders' own wedding planning experience. After spending countless hours
-                  searching for the perfect vendors, comparing prices, and coordinating details, they realized there had
-                  to be a better way.
+                  Memosheria was born from our founders' own wedding planning experience in Ethiopia. After spending
+                  countless hours searching for the perfect vendors, comparing prices, and coordinating details, they
+                  realized there had to be a better way for Ethiopian couples.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
                   What started as a simple idea to help couples find trusted wedding vendors has evolved into a
-                  comprehensive platform that serves thousands of couples and vendors across the country. We've built
-                  more than just a marketplace – we've created a community where love stories come to life.
+                  comprehensive platform that serves thousands of couples and vendors across Ethiopia. We've built more
+                  than just a marketplace – we've created a community where love stories come to life.
                 </p>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
                     <Calendar className="h-5 w-5 text-gold-600 mr-2" />
-                    <span className="text-gray-600">Founded in 2020</span>
+                    <span className="text-gray-600">Founded in 2023</span>
                   </div>
                   <div className="flex items-center">
                     <MapPin className="h-5 w-5 text-gold-600 mr-2" />
-                    <span className="text-gray-600">Based in New York</span>
+                    <span className="text-gray-600">Based in Addis Ababa</span>
                   </div>
                 </div>
               </div>
@@ -264,54 +261,35 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section */}
+      {/* Team Section - Clean Minimal Design */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Meet Our <span className="gradient-text">Team</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              The passionate people behind Memosheria who work tirelessly to make your wedding dreams come true
-            </p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">The passionate professionals behind Memosheria</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 max-w-6xl mx-auto">
             {team.map((member, index) => (
-              <Card
-                key={index}
-                className="card-luxury border-0 overflow-hidden group hover:scale-105 transition-all duration-300"
-              >
-                <div className="relative">
-                  <Image
-                    src={member.image || "/placeholder.svg"}
-                    alt={member.name}
-                    width={300}
-                    height={300}
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-bold text-xl text-gray-900">{member.name}</h3>
-                      <p className="text-gold-600 font-medium">{member.role}</p>
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Expertise</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {member.expertise.map((skill, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs bg-gold-100 text-gold-700">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+              <div key={index} className="text-center group">
+                <div className="relative mb-6">
+                  <div className="w-48 h-48 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <Image
+                      src={member.image || "/placeholder.svg"}
+                      alt={member.name}
+                      width={192}
+                      height={192}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-gray-900">{member.name}</h3>
+                  <p className="text-gold-600 font-medium">{member.role}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -377,8 +355,9 @@ export default function AboutPage() {
               Our <span className="gradient-text">Mission</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              To revolutionize wedding planning by creating a seamless, trustworthy platform that connects couples with
-              exceptional vendors, making every wedding celebration as unique and beautiful as the love it celebrates.
+              To revolutionize wedding planning in Ethiopia by creating a seamless, trustworthy platform that connects
+              couples with exceptional vendors, making every wedding celebration as unique and beautiful as the love it
+              celebrates.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
               <div className="text-center">
@@ -387,8 +366,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="font-bold text-lg text-gray-900 mb-2">Our Vision</h3>
                 <p className="text-gray-600">
-                  To be the world's most trusted wedding planning platform, where every couple finds their perfect
-                  match.
+                  To be Ethiopia's most trusted wedding planning platform, where every couple finds their perfect match.
                 </p>
               </div>
               <div className="text-center">
@@ -397,7 +375,8 @@ export default function AboutPage() {
                 </div>
                 <h3 className="font-bold text-lg text-gray-900 mb-2">Our Purpose</h3>
                 <p className="text-gray-600">
-                  To celebrate love by making wedding planning stress-free, enjoyable, and memorable for every couple.
+                  To celebrate love by making wedding planning stress-free, enjoyable, and memorable for every Ethiopian
+                  couple.
                 </p>
               </div>
               <div className="text-center">
@@ -464,8 +443,8 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">Call Us</h3>
-                <p className="text-gray-400">+1 (555) 123-WEDDING</p>
-                <p className="text-gray-400">Mon-Fri 9AM-6PM EST</p>
+                <p className="text-gray-400">+251 911 123456</p>
+                <p className="text-gray-400">Mon-Fri 9AM-6PM EAT</p>
               </div>
             </div>
             <div className="space-y-4">
@@ -484,8 +463,8 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">Visit Us</h3>
-                <p className="text-gray-400">123 Wedding Ave</p>
-                <p className="text-gray-400">New York, NY 10001</p>
+                <p className="text-gray-400">Bole Road, Addis Ababa</p>
+                <p className="text-gray-400">Ethiopia</p>
               </div>
             </div>
           </div>

@@ -25,7 +25,6 @@ import {
   SlidersHorizontal,
 } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 
 const mockPackages = [
   {
@@ -37,7 +36,7 @@ const mockPackages = [
     vendor: {
       id: "1",
       name: "Elite Moments Studio",
-      location: "New York, NY",
+      location: "Addis Ababa, Ethiopia",
       rating: 4.9,
       verified: true,
     },
@@ -58,7 +57,7 @@ const mockPackages = [
     vendor: {
       id: "2",
       name: "Enchanted Gardens",
-      location: "Los Angeles, CA",
+      location: "Addis Ababa, Ethiopia",
       rating: 4.8,
       verified: true,
     },
@@ -79,7 +78,7 @@ const mockPackages = [
     vendor: {
       id: "3",
       name: "Gourmet Celebrations",
-      location: "Chicago, IL",
+      location: "Addis Ababa, Ethiopia",
       rating: 4.9,
       verified: true,
     },
@@ -100,7 +99,7 @@ const mockPackages = [
     vendor: {
       id: "4",
       name: "Harmony Entertainment",
-      location: "Miami, FL",
+      location: "Addis Ababa, Ethiopia",
       rating: 4.7,
       verified: true,
     },
@@ -121,7 +120,7 @@ const mockPackages = [
     vendor: {
       id: "5",
       name: "Bloom & Blossom",
-      location: "Seattle, WA",
+      location: "Addis Ababa, Ethiopia",
       rating: 4.8,
       verified: true,
     },
@@ -142,7 +141,7 @@ const mockPackages = [
     vendor: {
       id: "6",
       name: "Elite Wedding Cars",
-      location: "San Francisco, CA",
+      location: "Addis Ababa, Ethiopia",
       rating: 4.6,
       verified: true,
     },
@@ -154,6 +153,48 @@ const mockPackages = [
     badge: "Luxury",
     availability: "Limited",
   },
+  {
+    id: "7",
+    title: "Traditional Wedding Cake",
+    description: "Custom designed wedding cakes with traditional and modern flavors",
+    price: 1200,
+    originalPrice: 1500,
+    vendor: {
+      id: "7",
+      name: "Sweet Dreams Bakery",
+      location: "Addis Ababa, Ethiopia",
+      rating: 4.7,
+      verified: true,
+    },
+    images: ["/cake-1.jpg"],
+    features: ["Custom design", "Multiple flavors", "Cake tasting", "Delivery included"],
+    category: "cakes",
+    rating: 4.7,
+    reviews: 78,
+    badge: "Custom Made",
+    availability: "Available",
+  },
+  {
+    id: "8",
+    title: "Bridal Makeup & Hair",
+    description: "Professional bridal makeup and hairstyling for your perfect wedding look",
+    price: 800,
+    originalPrice: 1000,
+    vendor: {
+      id: "8",
+      name: "Beauty Bliss Studio",
+      location: "Addis Ababa, Ethiopia",
+      rating: 4.8,
+      verified: true,
+    },
+    images: ["/elegant-bride.png"],
+    features: ["Bridal makeup", "Hair styling", "Trial session", "Touch-up kit"],
+    category: "beauty",
+    rating: 4.8,
+    reviews: 95,
+    badge: "Bridal Special",
+    availability: "Available",
+  },
 ]
 
 const categories = [
@@ -164,6 +205,8 @@ const categories = [
   { id: "music", name: "Music & DJ", icon: Music, count: 1 },
   { id: "decoration", name: "Decoration", icon: Palette, count: 1 },
   { id: "transportation", name: "Transportation", icon: Users, count: 1 },
+  { id: "cakes", name: "Wedding Cakes", icon: Gift, count: 1 },
+  { id: "beauty", name: "Beauty", icon: Palette, count: 1 },
 ]
 
 export default function PackagesPage() {
@@ -172,6 +215,9 @@ export default function PackagesPage() {
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [sortBy, setSortBy] = useState("popular")
   const [showFilters, setShowFilters] = useState(false)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const packagesPerPage = 6
 
   const filteredPackages = mockPackages.filter((pkg) => {
     const matchesCategory = selectedCategory === "all" || pkg.category === selectedCategory
@@ -196,6 +242,37 @@ export default function PackagesPage() {
     }
   })
 
+  // Pagination logic
+  const totalPages = Math.ceil(sortedPackages.length / packagesPerPage)
+  const startIndex = (currentPage - 1) * packagesPerPage
+  const endIndex = startIndex + packagesPerPage
+  const currentPackages = sortedPackages.slice(startIndex, endIndex)
+  const hasMorePackages = currentPage < totalPages
+
+  const handleToggleFavorite = (packageId: string) => {
+    setFavorites((prev) => {
+      const newFavorites = new Set(prev)
+      if (newFavorites.has(packageId)) {
+        newFavorites.delete(packageId)
+      } else {
+        newFavorites.add(packageId)
+      }
+      return newFavorites
+    })
+  }
+
+  const handleViewDetails = (packageId: string) => {
+    window.location.href = `/packages/${packageId}`
+  }
+
+  const handleBookNow = (packageId: string) => {
+    window.location.href = `/packages/${packageId}?action=book`
+  }
+
+  const handleLoadMore = () => {
+    setCurrentPage((prev) => prev + 1)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gold-50/30 to-bronze-50/30 pt-20">
       <div className="container mx-auto px-4 py-8">
@@ -205,7 +282,7 @@ export default function PackagesPage() {
             Wedding <span className="gradient-text">Packages</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover the perfect wedding services from our verified vendors
+            Discover the perfect wedding services from our verified vendors in Addis Ababa
           </p>
         </div>
 
@@ -273,16 +350,12 @@ export default function PackagesPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Location</h4>
-                    <Select>
+                    <Select defaultValue="addis-ababa">
                       <SelectTrigger className="border-gold-200">
                         <SelectValue placeholder="Select location" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Locations</SelectItem>
-                        <SelectItem value="ny">New York, NY</SelectItem>
-                        <SelectItem value="la">Los Angeles, CA</SelectItem>
-                        <SelectItem value="chicago">Chicago, IL</SelectItem>
-                        <SelectItem value="miami">Miami, FL</SelectItem>
+                        <SelectItem value="addis-ababa">Addis Ababa, Ethiopia</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -348,7 +421,7 @@ export default function PackagesPage() {
           <div className="flex-1">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-gray-600">
-                Showing {sortedPackages.length} of {mockPackages.length} packages
+                Showing {currentPackages.length} of {sortedPackages.length} packages in Addis Ababa
               </p>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <Clock className="h-4 w-4" />
@@ -357,7 +430,7 @@ export default function PackagesPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {sortedPackages.map((pkg, index) => (
+              {currentPackages.map((pkg, index) => (
                 <Card
                   key={pkg.id}
                   className="card-luxury border-0 overflow-hidden group hover:scale-105 transition-all duration-300 animate-fade-in"
@@ -382,9 +455,12 @@ export default function PackagesPage() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="absolute top-3 right-3 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 shadow-sm"
+                      className={`absolute top-3 right-3 bg-white/90 hover:bg-white text-gray-700 shadow-sm ${
+                        favorites.has(pkg.id) ? "text-red-500" : "hover:text-red-500"
+                      }`}
+                      onClick={() => handleToggleFavorite(pkg.id)}
                     >
-                      <Heart className="h-4 w-4" />
+                      <Heart className={`h-4 w-4 ${favorites.has(pkg.id) ? "fill-current" : ""}`} />
                     </Button>
                     <div className="absolute bottom-3 right-3">
                       <Badge
@@ -439,11 +515,18 @@ export default function PackagesPage() {
                     </div>
 
                     <div className="flex space-x-2">
-                      <Link href={`/packages/${pkg.id}`} className="flex-1">
-                        <Button className="w-full btn-luxury">View Details</Button>
-                      </Link>
-                      <Button variant="outline" size="icon" className="border-gold-300 hover:bg-gold-50 bg-transparent">
-                        <Heart className="h-4 w-4" />
+                      <Button className="flex-1 btn-luxury" onClick={() => handleViewDetails(pkg.id)}>
+                        View Details
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className={`border-gold-300 hover:bg-gold-50 bg-transparent ${
+                          favorites.has(pkg.id) ? "text-red-500 border-red-300" : ""
+                        }`}
+                        onClick={() => handleToggleFavorite(pkg.id)}
+                      >
+                        <Heart className={`h-4 w-4 ${favorites.has(pkg.id) ? "fill-current" : ""}`} />
                       </Button>
                     </div>
                   </CardContent>
@@ -471,10 +554,15 @@ export default function PackagesPage() {
               </div>
             )}
 
-            {/* Load More Button */}
-            {sortedPackages.length > 0 && (
+            {/* Load More Button - Only show if there are more packages */}
+            {hasMorePackages && sortedPackages.length > 0 && (
               <div className="text-center mt-12">
-                <Button variant="outline" size="lg" className="border-gold-300 hover:bg-gold-50 bg-transparent">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-gold-300 hover:bg-gold-50 bg-transparent"
+                  onClick={handleLoadMore}
+                >
                   Load More Packages
                 </Button>
               </div>

@@ -26,14 +26,13 @@ import {
   CheckCircle,
 } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 
 const mockVendors = [
   {
     id: "1",
     name: "Elite Moments Studio",
     category: "Photography",
-    location: "New York, NY",
+    location: "Addis Ababa, Ethiopia",
     rating: 4.9,
     reviews: 156,
     verified: true,
@@ -49,7 +48,7 @@ const mockVendors = [
     badges: ["Top Rated", "Quick Response", "Premium"],
     portfolio: ["/portfolio-1.jpg", "/portfolio-2.jpg", "/portfolio-3.jpg"],
     contact: {
-      phone: "+1 (555) 123-4567",
+      phone: "+251 911 123456",
       email: "info@elitemoments.com",
       website: "www.elitemoments.com",
     },
@@ -58,7 +57,7 @@ const mockVendors = [
     id: "2",
     name: "Enchanted Gardens",
     category: "Venues",
-    location: "Los Angeles, CA",
+    location: "Addis Ababa, Ethiopia",
     rating: 4.8,
     reviews: 89,
     verified: true,
@@ -74,7 +73,7 @@ const mockVendors = [
     badges: ["Verified", "Eco-Friendly", "Historic"],
     portfolio: ["/venue-1.jpg", "/venue-2.jpg", "/venue-3.jpg"],
     contact: {
-      phone: "+1 (555) 234-5678",
+      phone: "+251 911 234567",
       email: "events@enchantedgardens.com",
       website: "www.enchantedgardens.com",
     },
@@ -83,12 +82,12 @@ const mockVendors = [
     id: "3",
     name: "Gourmet Celebrations",
     category: "Catering",
-    location: "Chicago, IL",
+    location: "Addis Ababa, Ethiopia",
     rating: 4.9,
     reviews: 203,
     verified: true,
     featured: true,
-    avatar: "/vendor-catering.jpg",
+    avatar: "/catering-1.jpg",
     coverImage: "/vendor-cover-catering.jpg",
     description: "Premium catering services with customizable menus and exceptional presentation.",
     services: ["Wedding Catering", "Cocktail Hours", "Dessert Stations", "Dietary Accommodations"],
@@ -99,7 +98,7 @@ const mockVendors = [
     badges: ["Chef's Choice", "Michelin Recommended", "Organic"],
     portfolio: ["/catering-1.jpg", "/catering-2.jpg", "/catering-3.jpg"],
     contact: {
-      phone: "+1 (555) 345-6789",
+      phone: "+251 911 345678",
       email: "chef@gourmetcelebrations.com",
       website: "www.gourmetcelebrations.com",
     },
@@ -108,7 +107,7 @@ const mockVendors = [
     id: "4",
     name: "Harmony Entertainment",
     category: "Music & DJ",
-    location: "Miami, FL",
+    location: "Addis Ababa, Ethiopia",
     rating: 4.7,
     reviews: 134,
     verified: true,
@@ -124,7 +123,7 @@ const mockVendors = [
     badges: ["Live Performance", "Full Equipment", "Bilingual"],
     portfolio: ["/music-1.jpg", "/music-2.jpg", "/music-3.jpg"],
     contact: {
-      phone: "+1 (555) 456-7890",
+      phone: "+251 911 456789",
       email: "bookings@harmonyent.com",
       website: "www.harmonyentertainment.com",
     },
@@ -133,12 +132,12 @@ const mockVendors = [
     id: "5",
     name: "Bloom & Blossom",
     category: "Floral Design",
-    location: "Seattle, WA",
+    location: "Addis Ababa, Ethiopia",
     rating: 4.8,
     reviews: 167,
     verified: true,
     featured: true,
-    avatar: "/vendor-floral.jpg",
+    avatar: "/floral-1.jpg",
     coverImage: "/vendor-cover-floral.jpg",
     description: "Creative floral designers crafting stunning arrangements that bring your vision to life.",
     services: ["Bridal Bouquets", "Ceremony Decor", "Centerpieces", "Floral Installations"],
@@ -149,7 +148,7 @@ const mockVendors = [
     badges: ["Seasonal Flowers", "Sustainable", "Custom Design"],
     portfolio: ["/floral-1.jpg", "/floral-2.jpg", "/floral-3.jpg"],
     contact: {
-      phone: "+1 (555) 567-8901",
+      phone: "+251 911 567890",
       email: "hello@bloomblossom.com",
       website: "www.bloomblossom.com",
     },
@@ -158,7 +157,7 @@ const mockVendors = [
     id: "6",
     name: "Sweet Dreams Bakery",
     category: "Wedding Cakes",
-    location: "Austin, TX",
+    location: "Addis Ababa, Ethiopia",
     rating: 4.9,
     reviews: 145,
     verified: true,
@@ -174,7 +173,7 @@ const mockVendors = [
     badges: ["Custom Cakes", "Gluten-Free Options", "Award Winner"],
     portfolio: ["/cake-1.jpg", "/cake-2.jpg", "/cake-3.jpg"],
     contact: {
-      phone: "+1 (555) 678-9012",
+      phone: "+251 911 678901",
       email: "orders@sweetdreamsbakery.com",
       website: "www.sweetdreamsbakery.com",
     },
@@ -196,6 +195,7 @@ export default function VendorsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("rating")
   const [showFeatured, setShowFeatured] = useState(false)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
 
   const filteredVendors = mockVendors.filter((vendor) => {
     const matchesCategory =
@@ -223,6 +223,30 @@ export default function VendorsPage() {
     }
   })
 
+  const handleToggleFavorite = (vendorId: string) => {
+    setFavorites((prev) => {
+      const newFavorites = new Set(prev)
+      if (newFavorites.has(vendorId)) {
+        newFavorites.delete(vendorId)
+      } else {
+        newFavorites.add(vendorId)
+      }
+      return newFavorites
+    })
+  }
+
+  const handleViewProfile = (vendorId: string) => {
+    window.location.href = `/vendors/${vendorId}`
+  }
+
+  const handleContactVendor = (vendorId: string) => {
+    window.location.href = `/vendors/${vendorId}?action=contact`
+  }
+
+  const handleBookVendor = (vendorId: string) => {
+    window.location.href = `/vendors/${vendorId}?action=book`
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gold-50/30 to-bronze-50/30 pt-20">
       <div className="container mx-auto px-4 py-8">
@@ -232,7 +256,7 @@ export default function VendorsPage() {
             Wedding <span className="gradient-text">Vendors</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Connect with verified wedding professionals in your area
+            Connect with verified wedding professionals in Addis Ababa, Ethiopia
           </p>
         </div>
 
@@ -303,7 +327,7 @@ export default function VendorsPage() {
         {/* Results Count */}
         <div className="mb-6 text-center">
           <p className="text-gray-600">
-            Showing {sortedVendors.length} of {mockVendors.length} vendors
+            Showing {sortedVendors.length} of {mockVendors.length} vendors in Addis Ababa, Ethiopia
           </p>
         </div>
 
@@ -346,9 +370,12 @@ export default function VendorsPage() {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="absolute top-3 right-3 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 shadow-sm"
+                  className={`absolute top-3 right-3 bg-white/90 hover:bg-white text-gray-700 shadow-sm ${
+                    favorites.has(vendor.id) ? "text-red-500" : "hover:text-red-500"
+                  }`}
+                  onClick={() => handleToggleFavorite(vendor.id)}
                 >
-                  <Heart className="h-4 w-4" />
+                  <Heart className={`h-4 w-4 ${favorites.has(vendor.id) ? "fill-current" : ""}`} />
                 </Button>
 
                 {/* Vendor Avatar */}
@@ -432,13 +459,23 @@ export default function VendorsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-2">
-                  <Link href={`/vendors/${vendor.id}`} className="flex-1">
-                    <Button className="w-full btn-luxury">View Profile</Button>
-                  </Link>
-                  <Button variant="outline" size="icon" className="border-gold-300 hover:bg-gold-50 bg-transparent">
+                  <Button className="flex-1 btn-luxury" onClick={() => handleViewProfile(vendor.id)}>
+                    View Profile
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-gold-300 hover:bg-gold-50 bg-transparent"
+                    onClick={() => handleContactVendor(vendor.id)}
+                  >
                     <MessageCircle className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="border-gold-300 hover:bg-gold-50 bg-transparent">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-gold-300 hover:bg-gold-50 bg-transparent"
+                    onClick={() => handleBookVendor(vendor.id)}
+                  >
                     <Calendar className="h-4 w-4" />
                   </Button>
                 </div>

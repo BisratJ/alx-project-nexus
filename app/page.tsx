@@ -27,6 +27,7 @@ import { useState, useEffect } from "react"
 
 export default function HomePage() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [favorites, setFavorites] = useState<Set<number>>(new Set())
 
   const features = [
     {
@@ -61,7 +62,7 @@ export default function HomePage() {
       text: "Memosheria transformed our wedding planning from stressful to magical. Every vendor was perfect!",
       rating: 5,
       image: "/couple-1.jpg",
-      location: "New York, NY",
+      location: "Addis Ababa, Ethiopia",
       weddingDate: "June 2024",
     },
     {
@@ -69,23 +70,23 @@ export default function HomePage() {
       text: "The platform made it so easy to compare vendors and manage our budget. Highly recommend!",
       rating: 5,
       image: "/couple-2.jpg",
-      location: "Los Angeles, CA",
+      location: "Addis Ababa, Ethiopia",
       weddingDate: "September 2024",
     },
     {
       name: "Lisa & David Rodriguez",
       text: "From booking to the big day, everything was seamless. Our dream wedding came true!",
       rating: 5,
-      image: "/couple-3.jpg",
-      location: "Miami, FL",
+      image: "/couple-3.png",
+      location: "Addis Ababa, Ethiopia",
       weddingDate: "March 2024",
     },
   ]
 
   const stats = [
-    { number: "10,000+", label: "Happy Couples", icon: Heart },
+    { number: "5,000+", label: "Happy Couples", icon: Heart },
     { number: "500+", label: "Verified Vendors", icon: Award },
-    { number: "50+", label: "Cities Covered", icon: MapPin },
+    { number: "1", label: "City Covered", icon: MapPin },
     { number: "99.9%", label: "Success Rate", icon: CheckCircle },
   ]
 
@@ -127,6 +128,31 @@ export default function HomePage() {
       features: ["3-course meal", "Open bar", "Cake included", "Dietary options"],
     },
   ]
+
+  const handleBookNow = (packageId: number) => {
+    // Redirect to booking page with package ID
+    window.location.href = `/packages/${packageId}?action=book`
+  }
+
+  const handleToggleFavorite = (packageId: number) => {
+    setFavorites((prev) => {
+      const newFavorites = new Set(prev)
+      if (newFavorites.has(packageId)) {
+        newFavorites.delete(packageId)
+      } else {
+        newFavorites.add(packageId)
+      }
+      return newFavorites
+    })
+  }
+
+  const handleGetStarted = () => {
+    window.location.href = "/register"
+  }
+
+  const handleTalkToExpert = () => {
+    window.location.href = "/contact"
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -170,19 +196,19 @@ export default function HomePage() {
                   placeholder="Search for photographers, venues, caterers..."
                   className="pl-12 pr-4 py-4 text-lg rounded-full border-2 border-gold-200 focus:border-gold-400 shadow-lg"
                 />
-                <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-luxury rounded-full px-6">
-                  Search
-                </Button>
+                <Link href="/packages">
+                  <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-luxury rounded-full px-6">
+                    Search
+                  </Button>
+                </Link>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link href="/register">
-                <Button size="lg" className="btn-luxury text-lg px-8 py-4 rounded-full">
-                  Start Planning Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
+              <Button size="lg" className="btn-luxury text-lg px-8 py-4 rounded-full" onClick={handleGetStarted}>
+                Start Planning Free
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
               <Link href="/packages">
                 <Button
                   size="lg"
@@ -238,9 +264,12 @@ export default function HomePage() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-700 hover:text-red-500"
+                    className={`absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-700 ${
+                      favorites.has(pkg.id) ? "text-red-500" : "hover:text-red-500"
+                    }`}
+                    onClick={() => handleToggleFavorite(pkg.id)}
                   >
-                    <Heart className="h-4 w-4" />
+                    <Heart className={`h-4 w-4 ${favorites.has(pkg.id) ? "fill-current" : ""}`} />
                   </Button>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
@@ -276,9 +305,16 @@ export default function HomePage() {
                     ))}
                   </div>
                   <div className="flex space-x-2">
-                    <Button className="flex-1 btn-luxury">Book Now</Button>
-                    <Button variant="outline" size="icon">
-                      <Heart className="h-4 w-4" />
+                    <Button className="flex-1 btn-luxury" onClick={() => handleBookNow(pkg.id)}>
+                      Book Now
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleToggleFavorite(pkg.id)}
+                      className={favorites.has(pkg.id) ? "text-red-500 border-red-300" : ""}
+                    >
+                      <Heart className={`h-4 w-4 ${favorites.has(pkg.id) ? "fill-current" : ""}`} />
                     </Button>
                   </div>
                 </CardContent>
@@ -405,25 +441,23 @@ export default function HomePage() {
             Join thousands of couples who have planned their perfect day with Memosheria
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="text-lg px-8 py-4 rounded-full bg-white text-gold-600 hover:bg-gray-100"
-              >
-                Get Started Today
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 py-4 rounded-full border-2 border-white text-white hover:bg-white hover:text-gold-600 bg-transparent"
-              >
-                Talk to Expert
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8 py-4 rounded-full bg-white text-gold-600 hover:bg-gray-100"
+              onClick={handleGetStarted}
+            >
+              Get Started Today
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-4 rounded-full border-2 border-white text-white hover:bg-white hover:text-gold-600 bg-transparent"
+              onClick={handleTalkToExpert}
+            >
+              Talk to Expert
+            </Button>
           </div>
         </div>
       </section>
@@ -433,7 +467,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             <div className="space-y-4">
-              <Logo variant="primary" size="lg" href="#" className="brightness-0 invert" />
+              <Logo variant="primary" size="lg" href="/" className="brightness-0 invert" />
               <p className="text-gray-400 leading-relaxed">
                 Making wedding dreams come true, one celebration at a time. Your perfect day starts here.
               </p>
@@ -465,7 +499,7 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/planning-tools" className="hover:text-white transition-colors">
+                  <Link href="/dashboard" className="hover:text-white transition-colors">
                     Planning Tools
                   </Link>
                 </li>
@@ -523,7 +557,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Memosheria. All rights reserved. Made with ❤️ for couples worldwide.</p>
+            <p>&copy; 2024 Memosheria. All rights reserved. Made with ❤️ for couples in Ethiopia.</p>
           </div>
         </div>
       </footer>
