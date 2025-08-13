@@ -1,4 +1,4 @@
-# Memosheria - Wedding Event Management System
+# Memosheria - Wedding Event Booking 
 
 A comprehensive wedding event management platform built with Next.js, featuring role-based authentication and dashboards for users, vendors, and administrators.
 
