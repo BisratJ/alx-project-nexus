@@ -2,44 +2,33 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
-import { useAuth } from "@/contexts/auth-context"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Logo } from "@/components/ui/logo"
-import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react"
-import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { Eye, EyeOff, Heart, Sparkles, Star, ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [redirectUrl, setRedirectUrl] = useState("")
-
+  const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const { toast } = useToast()
-
-  useEffect(() => {
-    // Get redirect URL from query parameters if available
-    const redirect = searchParams.get("redirect")
-    if (redirect) {
-      setRedirectUrl(redirect)
-    }
-  }, [searchParams])
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
-    setLoading(true)
+    setIsLoading(true)
 
     try {
       const user = await login(email, password)
@@ -48,241 +37,253 @@ export default function LoginPage() {
       toast({
         title: "Welcome back!",
         description: `Successfully logged in as ${user.name || user.email}`,
+        duration: 3000,
       })
 
-      // Small delay to show the toast before redirecting
+      // Redirect based on user role
       setTimeout(() => {
-        // Redirect based on user role or redirect URL
-        if (redirectUrl) {
-          router.push(redirectUrl)
-        } else {
-          // Redirect based on user role
-          switch (user.role) {
-            case "admin":
-              router.push("/admin")
-              break
-            case "vendor":
-              router.push("/vendor")
-              break
-            default:
-              router.push("/dashboard")
-          }
+        switch (user.role) {
+          case "admin":
+            router.push("/admin")
+            break
+          case "vendor":
+            router.push("/vendor")
+            break
+          default:
+            router.push("/dashboard")
         }
       }, 1000)
     } catch (err) {
-      setError("Invalid email or password. Please try again.")
+      setError(err instanceof Error ? err.message : "Login failed")
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
-  const demoAccounts = [
-    { role: "User (Bride/Groom)", email: "bride@example.com", password: "password" },
-    { role: "Vendor", email: "vendor@example.com", password: "password" },
-    { role: "Admin", email: "admin@example.com", password: "password" },
-  ]
+  const handleDemoLogin = async (demoEmail: string) => {
+    setError("")
+    setEmail(demoEmail)
+    setPassword("password")
+    setIsLoading(true)
 
-  const fillDemoAccount = (email: string, password: string) => {
-    setEmail(email)
-    setPassword(password)
-    setError("") // Clear any existing errors when filling demo account
+    try {
+      const user = await login(demoEmail, "password")
+
+      toast({
+        title: "Demo Login Successful!",
+        description: `Logged in as ${user.name}`,
+        duration: 3000,
+      })
+
+      setTimeout(() => {
+        switch (user.role) {
+          case "admin":
+            router.push("/admin")
+            break
+          case "vendor":
+            router.push("/vendor")
+            break
+          default:
+            router.push("/dashboard")
+        }
+      }, 1000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Demo login failed")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gold-100 via-gold-50 to-bronze-100 px-4 py-32 relative overflow-hidden">
-      {/* Background decorations */}
+    <div className="min-h-screen bg-gradient-to-br from-gold-100 via-gold-50 to-bronze-100 py-32 px-4 relative overflow-hidden">
+      {/* Background Decorations */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-gold-300/20 to-bronze-300/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-gold-200/30 to-bronze-200/30 rounded-full blur-3xl animate-pulse"></div>
         <div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-bronze-300/20 to-gold-300/20 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-bronze-200/30 to-gold-200/30 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-gold-100/20 to-bronze-100/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "4s" }}
         ></div>
       </div>
 
-      <div className="absolute top-20 left-20 animate-sparkle">
-        <Sparkles className="h-6 w-6 text-gold-500" />
+      {/* Floating Elements */}
+      <div className="absolute top-32 left-32 animate-float">
+        <Sparkles className="h-6 w-6 text-gold-400 opacity-70" />
       </div>
-      <div className="absolute bottom-20 right-20 animate-sparkle" style={{ animationDelay: "1s" }}>
-        <Sparkles className="h-4 w-4 text-bronze-500" />
+      <div className="absolute top-40 right-40 animate-float" style={{ animationDelay: "1s" }}>
+        <Heart className="h-5 w-5 text-bronze-400 opacity-60" />
       </div>
-      <div className="absolute top-1/2 left-10 animate-sparkle" style={{ animationDelay: "2s" }}>
-        <Sparkles className="h-5 w-5 text-gold-600" />
+      <div className="absolute bottom-40 left-40 animate-float" style={{ animationDelay: "2s" }}>
+        <Star className="h-4 w-4 text-gold-500 opacity-50" />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8 animate-fade-in">
-          <Logo variant="primary" size="xl" href="/" />
-          <h1 className="text-3xl font-bold text-gray-800 mt-4 mb-2">Welcome Back</h1>
+      <div className="max-w-md mx-auto relative z-10">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-gold-500 to-bronze-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Heart className="h-7 w-7 text-white" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
           <p className="text-gray-600">Sign in to continue planning your perfect wedding</p>
         </div>
 
-        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gold-600 to-bronze-600 bg-clip-text text-transparent">
-              Sign In
-            </CardTitle>
-            <CardDescription className="text-gray-600">Enter your credentials to access your account</CardDescription>
+        <Card className="shadow-2xl border-0 bg-white/90 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-6">
+            <CardTitle className="text-2xl text-center text-gray-800">Sign In</CardTitle>
+            <CardDescription className="text-center text-gray-600">
+              Enter your credentials to access your account
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {error && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertDescription className="text-red-700">{error}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <Alert variant="destructive" className="animate-fade-in">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email Address
+                <Label htmlFor="email" className="text-gray-700 font-medium">
+                  Email
                 </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 h-12 border-gold-200 focus:border-gold-400 focus:ring-gold-400"
-                    required
-                  />
-                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="h-12 border-gray-200 focus:border-gold-400 focus:ring-gold-400/20"
+                />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="password" className="text-gray-700 font-medium">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-12 h-12 border-gold-200 focus:border-gold-400 focus:ring-gold-400"
                     required
+                    className="h-12 pr-12 border-gray-200 focus:border-gold-400 focus:ring-gold-400/20"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-gold-50"
+                    className="absolute right-0 top-0 h-12 w-12 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-gold-600 focus:ring-gold-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                    Remember me
-                  </label>
-                </div>
-                <Link href="/forgot-password" className="text-sm text-gold-600 hover:text-gold-700 font-medium">
-                  Forgot password?
-                </Link>
-              </div>
-
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-gold-500 to-bronze-500 hover:from-gold-600 hover:to-bronze-600 text-white h-12 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                disabled={loading}
+                className="w-full h-12 bg-gradient-to-r from-gold-500 to-bronze-500 hover:from-gold-600 hover:to-bronze-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                disabled={isLoading}
               >
-                {loading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Signing in...
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Signing In...</span>
                   </div>
                 ) : (
-                  "Sign In"
+                  <div className="flex items-center space-x-2">
+                    <span>Sign In</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
                 )}
               </Button>
             </form>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-300" />
+                <span className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                <span className="bg-white px-2 text-gray-500">Or try demo accounts</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-12 bg-transparent hover:bg-gray-50">
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
-                Google
+            <div className="grid grid-cols-1 gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleDemoLogin("bride@example.com")}
+                disabled={isLoading}
+                className="h-12 border-gold-200 hover:bg-gold-50 hover:border-gold-300 transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center">
+                    <Heart className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-medium text-gray-800">Demo Bride Account</div>
+                    <div className="text-xs text-gray-500">bride@example.com</div>
+                  </div>
+                </div>
               </Button>
-              <Button variant="outline" className="h-12 bg-transparent hover:bg-gray-50">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                Facebook
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleDemoLogin("vendor@example.com")}
+                disabled={isLoading}
+                className="h-12 border-gold-200 hover:bg-gold-50 hover:border-gold-300 transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-medium text-gray-800">Demo Vendor Account</div>
+                    <div className="text-xs text-gray-500">vendor@example.com</div>
+                  </div>
+                </div>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleDemoLogin("admin@example.com")}
+                disabled={isLoading}
+                className="h-12 border-gold-200 hover:bg-gold-50 hover:border-gold-300 transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-violet-400 rounded-full flex items-center justify-center">
+                    <Star className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-medium text-gray-800">Demo Admin Account</div>
+                    <div className="text-xs text-gray-500">admin@example.com</div>
+                  </div>
+                </div>
               </Button>
             </div>
 
-            <div className="text-center">
+            <div className="text-center pt-4">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}
-                <Link href="/register" className="text-gold-600 hover:text-gold-700 font-medium">
-                  Sign up for free
+                <Link href="/register" className="font-medium text-gold-600 hover:text-gold-700 transition-colors">
+                  Sign up here
                 </Link>
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Demo Accounts */}
-        <Card className="mt-6 border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-center text-gold-700">Demo Accounts</CardTitle>
-            <CardDescription className="text-center text-sm">
-              Click any account below to auto-fill credentials
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {demoAccounts.map((account, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                className="w-full justify-start h-auto p-3 hover:bg-gold-50 hover:border-gold-300 bg-transparent"
-                onClick={() => fillDemoAccount(account.email, account.password)}
-              >
-                <div className="text-left">
-                  <div className="font-medium text-sm">{account.role}</div>
-                  <div className="text-xs text-gray-500">{account.email}</div>
-                </div>
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
+        <div className="mt-8 text-center">
+          <Badge variant="secondary" className="bg-white/80 text-gray-600 px-4 py-2">
+            <Sparkles className="h-3 w-3 mr-1" />
+            All demo accounts use password: "password"
+          </Badge>
+        </div>
       </div>
     </div>
   )
